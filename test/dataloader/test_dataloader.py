@@ -1,7 +1,7 @@
 import sys
 sys.path.append('../../')
 
-from dataloader import DenoisingDataset
+from dataloader import DenoisingDataset, RandomRot90
 
 import torchvision.transforms as T
 import matplotlib.pyplot as plt
@@ -14,14 +14,16 @@ transform_pipeline = T.Compose([
     T.RandomCrop(size=(patch_size, patch_size)),
     T.RandomHorizontalFlip(p=0.5),
     T.RandomVerticalFlip(p=0.5),
+    RandomRot90(),
 ])
         
 data = DenoisingDataset(
-    path_list = ['/Users/emoebel/serpico-fs2/denoising/paper/normalization_invariant_nn/datasets/datasets_testing/Set12'],
+    path_list = ['/Users/emoebel/serpico-fs2/denoising/paper/data_and_models/datasets/datasets_testing/Set12'],
     transform = transform_pipeline,
     gray = True,
     sigma_low = 1/255,
     sigma_high = 55/255,
+    patches_per_img = 1,
 )
 
 # Plot:

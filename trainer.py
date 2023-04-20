@@ -30,7 +30,7 @@ class DenoisingTrainer():
         self.metric = MetricPSNR()
 
         self.current_epoch = 0
-        self.save_every_n_epochs = 20
+        self.save_every_n_epochs = 2
 
         self.path_model_weights = 'model_weights/'
 
@@ -89,8 +89,7 @@ class DenoisingTrainer():
 
         loss_train_average = running_loss / len(self.dataloader_train)
         metric_train_average = running_metric / len(self.dataloader_train)
-        print(
-            f'- Train: loss={np.round(loss_train_average, 6)}, psnr={np.round(metric_train_average, 2)} dB - {np.round(stop - start, 2)} sec')
+        print(f'- Train: loss={np.round(loss_train_average, 6)}, psnr={np.round(metric_train_average, 2)} dB - {np.round(stop-start, 2)} sec')
 
     def validation_step(self):
         self.model.eval()
