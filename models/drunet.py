@@ -11,34 +11,34 @@ import torch.nn as nn
 import torch.nn.functional as F
 
 class ResBlock(nn.Module):
-    def __init__(self, in_channels=64, out_channels=64):
+    def __init__(self, in_channels=64, out_channels=64, bias=False):
         super(ResBlock, self).__init__()
-        self.m_res = nn.Sequential(nn.Conv2d(in_channels, in_channels, 3, stride=1, padding=1, bias=False),
+        self.m_res = nn.Sequential(nn.Conv2d(in_channels, in_channels, 3, stride=1, padding=1, bias=bias),
                                 nn.ReLU(inplace=True),
-                                nn.Conv2d(in_channels, out_channels, 3, stride=1, padding=1, bias=False))
+                                nn.Conv2d(in_channels, out_channels, 3, stride=1, padding=1, bias=bias))
         
     def forward(self, x):
         return x + self.m_res(x)
 
 class DRUnet(nn.Module):
-    def __init__(self, in_nc=1, out_nc=1, nc=[64, 128, 256, 512], nb=4):
+    def __init__(self, in_nc=1, out_nc=1, nc=[64, 128, 256, 512], nb=4, bias=False):
         super(DRUnet, self).__init__()
 
-        self.m_head = nn.Conv2d(in_nc, nc[0], 3, stride=1, padding=1, bias=False)
+        self.m_head = nn.Conv2d(in_nc, nc[0], 3, stride=1, padding=1, bias=bias)
         
         self.m_down = nn.ModuleList([nn.Sequential(
-            *[ResBlock(nc[i], nc[i]) for _ in range(nb)],
-            nn.Conv2d(nc[i], nc[i+1], kernel_size=2, stride=2, padding=0, bias=False))
+            *[ResBlock(nc[i], nc[i], bias) for _ in range(nb)],
+            nn.Conv2d(nc[i], nc[i+1], kernel_size=2, stride=2, padding=0, bias=bias))
             for i in range(len(nc)-1)])
 
-        self.m_body = nn.Sequential(*[ResBlock(nc[-1], nc[-1]) for _ in range(nb)])
+        self.m_body = nn.Sequential(*[ResBlock(nc[-1], nc[-1], bias) for _ in range(nb)])
 
         self.m_up = nn.ModuleList([nn.Sequential(
-            nn.ConvTranspose2d(nc[i], nc[i-1], kernel_size=2, stride=2, padding=0, bias=False),
-            *[ResBlock(nc[i-1], nc[i-1]) for _ in range(nb)])
+            nn.ConvTranspose2d(nc[i], nc[i-1], kernel_size=2, stride=2, padding=0, bias=bias),
+            *[ResBlock(nc[i-1], nc[i-1], bias) for _ in range(nb)])
             for i in range(len(nc)-1, 0, -1)])
 
-        self.m_tail = nn.Conv2d(nc[0], out_nc, 3, stride=1, padding=1, bias=False)
+        self.m_tail = nn.Conv2d(nc[0], out_nc, 3, stride=1, padding=1, bias=bias)
 
     def forward(self, x, sigma=None):
         _, _, h, w = x.size()
