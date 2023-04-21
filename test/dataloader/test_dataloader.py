@@ -18,12 +18,12 @@ transform_pipeline = T.Compose([
 ])
         
 data = DenoisingDataset(
-    path_list = ['/Users/emoebel/serpico-fs2/denoising/paper/data_and_models/datasets/datasets_testing/Set12'],
-    transform = transform_pipeline,
-    gray = True,
-    sigma_low = 1/255,
-    sigma_high = 55/255,
-    patches_per_img = 1,
+    path_list=['/Users/emoebel/serpico-fs2/denoising/paper/data_and_models/datasets/datasets_testing/Set12'],
+    transform=transform_pipeline,
+    gray=True,
+    sigma_low=1/255,
+    sigma_high=55/255,
+    patches_per_img=1,
 )
 
 # Plot:

@@ -30,7 +30,7 @@ class DenoisingTrainer():
         self.metric = MetricPSNR()
 
         self.current_epoch = 0
-        self.save_every_n_epochs = 2
+        self.save_every_n_epochs = 1
 
         self.path_model_weights = 'model_weights/'
 
@@ -47,9 +47,11 @@ class DenoisingTrainer():
             self.validation_step()
 
             if e % self.save_every_n_epochs == 0:
-                torch.save(self.model, os.path.join(self.path_model_weights, f'model_weights_epoch{e}.p'))
+                #torch.save(self.model, os.path.join(self.path_model_weights, f'model_weights_epoch{e}.p'))
+                torch.save(self.model.state_dict(), os.path.join(self.path_model_weights, f'model_weights_epoch{e}.pkl'))
 
-        torch.save(self.model, os.path.join(self.path_model_weights, f'model_weights_final.p'))
+        #torch.save(self.model, os.path.join(self.path_model_weights, f'model_weights_final.p'))
+        torch.save(self.model.state_dict(), os.path.join(self.path_model_weights, f'model_weights_epoch{e}.pkl'))
 
         stop = time.time()
         print(f'END - Total training time: {np.round(stop - start, 2)} seconds')

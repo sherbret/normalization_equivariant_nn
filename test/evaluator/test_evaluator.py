@@ -8,7 +8,7 @@ from evaluator import Evaluator
 
 sys.path.append('/net/serpico-fs2/emoebel/github/sdeep')
 from sdeep.models import UNet
-from sdeep.models.unet import UNetConvBlock, UNetEncoderBlock, UNetDecoderBlock
+#from sdeep.models.unet import UNetConvBlock, UNetEncoderBlock, UNetDecoderBlock
 
 device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
 
@@ -20,22 +20,22 @@ data_test = DenoisingDataset(
     sigma_low=25/255,
     sigma_high=25/255,
 )
-loader_test = DataLoader(data_test, batch_size=1, shuffle=False)
+#loader_test = DataLoader(data_test, batch_size=1, shuffle=False)
 
 # Initialize model:
-# model = UNet(
-#     n_channels_in=1,
-#     n_channels_out=1,
-#     n_feature_first=32,
-#     use_batch_norm=True,
-# )
-model = torch.load('/net/serpico-fs2/emoebel/denoising/airbus/care/attempt3_brkl_sdeep/train_seb/logs/care49.p')
+model = UNet(
+    n_channels_in=1,
+    n_channels_out=1,
+    n_feature_first=32,
+    use_batch_norm=True,
+)
+model.load_state_dict(torch.load('weights_test.pkl'))
 model.to(device)
 
 # Initialize evaluator:
 eval = Evaluator(
-    dataloader_test=loader_test,
-    model = model,
+    dataset_test=data_test,
+    model=model,
 )
 
 # Eval:

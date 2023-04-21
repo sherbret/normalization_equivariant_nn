@@ -38,7 +38,7 @@ class DenoisingDataset(Dataset):
 
     def load_images(self, path_list):
         for path in path_list:
-            self.fname_list = get_fname_list_from_dir(dir_path=path, ext_list=['jpg', 'png', 'bpm'])
+            self.fname_list = get_fname_list_from_dir(dir_path=path, ext_list=['jpg', 'png', 'bmp'])
             for fname in self.fname_list:
                 path_img = os.path.join(path, fname)
                 img_pil = Image.open(path_img)
