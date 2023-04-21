@@ -27,6 +27,7 @@ class AffineConv2d(nn.Conv2d):
             x = F.pad(x, [padding]*4, mode=self.padding_mode)
         return F.conv2d(x, self.affine_norm(self.weight), bias=self.bias, stride=self.stride, padding=0, dilation=self.dilation, groups=self.groups)
 
+
 class AffineConvTranspose2d(nn.Module):
     """ Affine ConvTranspose2d with kernel=2 and stride=2, implemented using PixelShuffle """
     def __init__(self, in_channels, out_channels):
@@ -36,6 +37,7 @@ class AffineConvTranspose2d(nn.Module):
             
     def forward(self, x):
         return self.pixel_shuffle(self.conv1x1(x))
+
 
 class SortPool(nn.Module):
     def __init__(self):
@@ -49,3 +51,16 @@ class SortPool(nn.Module):
         y[:, :, 1::2] = F.max_pool1d(x, 2) 
         return y.permute(0, 2, 1).view(N, -1, H, W)
 
+
+class SortPool2(nn.Module):
+    def __init__(self, kernel_size=2):
+        super(SortPool2, self).__init__()
+        self.kernel_size = kernel_size
+
+    def forward(self, x):
+        N, C, H, W = x.size()
+        x = x.permute(0, 2, 3, 1).view(N, H * W, C)
+        x_max = F.max_pool1d(x, self.kernel_size)
+        x_min = -F.max_pool1d(-x, self.kernel_size)
+        x = torch.cat((x_max, x_min), dim=2)
+        return x.permute(0, 2, 1).view(N, -1, H, W)
