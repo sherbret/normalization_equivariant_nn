@@ -40,17 +40,18 @@ class DRUnet(nn.Module):
 
         self.m_tail = nn.Conv2d(nc[0], out_nc, 3, stride=1, padding=1, bias=False)
 
-    def forward(self, x, sigma):
+    def forward(self, x, sigma=None):
         _, _, h, w = x.size()
         scale = len(self.m_down)
         d = 2**scale
         # Size handling (h and w must divisible by d)
         r1, r2 = h % d, w % d
-        x = F.pad(x, pad=(0, d-r2 if r2 > 0 else 0, 0, d-r1 if r1 > 0 else 0), mode='reflect') 
-        
-        # Concatenate noisemap as additional input
-        noisemap = sigma * torch.ones(x.size(0), 1, x.size(2), x.size(3), device=x.device, dtype=x.dtype)
-        x = torch.cat((x, noisemap), dim=1)
+        x = F.pad(x, pad=(0, d-r2 if r2 > 0 else 0, 0, d-r1 if r1 > 0 else 0), mode='reflect')
+
+        # Concatenate noisemap as additional input (useless for blind denoising)
+        if sigma is not None:
+            noisemap = sigma * torch.ones(x.size(0), 1, x.size(2), x.size(3), device=x.device, dtype=x.dtype)
+            x = torch.cat((x, noisemap), dim=1)
 
         layers = [self.m_head(x)]
         for i in range(scale): layers.append(self.m_down[i](layers[-1]))
