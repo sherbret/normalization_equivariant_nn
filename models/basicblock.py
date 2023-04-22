@@ -11,7 +11,7 @@ import torch.nn as nn
 import torch.nn.functional as F
 
 class AffineConv2d(nn.Conv2d):
-    def __init__(self, in_channels, out_channels, kernel_size, stride=1, padding=0, dilation=1, groups=1, bias=False, padding_mode='reflect', noisemap=True):
+    def __init__(self, in_channels, out_channels, kernel_size, stride=1, padding=0, dilation=1, groups=1, bias=False, padding_mode='reflect', noisemap=False):
         super(AffineConv2d, self).__init__(in_channels, out_channels, kernel_size, 
                                            stride=stride, padding=padding, dilation=dilation, 
                                            groups=groups, bias=bias, padding_mode=padding_mode)
