@@ -11,10 +11,11 @@ import torch.nn as nn
 import torch.nn.functional as F
 
 class AffineConv2d(nn.Conv2d):
-    def __init__(self, in_channels, out_channels, kernel_size, stride=1, padding=0, dilation=1, groups=1, bias=False, padding_mode='reflect'):
+    def __init__(self, in_channels, out_channels, kernel_size, stride=1, padding=0, dilation=1, groups=1, bias=False, padding_mode='reflect', noisemap=True):
         super(AffineConv2d, self).__init__(in_channels, out_channels, kernel_size, 
                                            stride=stride, padding=padding, dilation=dilation, 
                                            groups=groups, bias=bias, padding_mode=padding_mode)
+        self.noisemap = noisemap
         
     def affine_norm(self, w_init):
         w = w_init.view(self.out_channels, -1)
@@ -25,7 +26,11 @@ class AffineConv2d(nn.Conv2d):
         padding = self.padding[0]
         if padding > 0:
             x = F.pad(x, [padding]*4, mode=self.padding_mode)
-        return F.conv2d(x, self.affine_norm(self.weight), bias=self.bias, stride=self.stride, padding=0, dilation=self.dilation, groups=self.groups)
+        if self.noisemap:
+            kernel = torch.cat((self.affine_norm(self.weight[:, :-1, :, :]), self.weight[:, -1:, :, :]), dim=1)
+        else:
+            kernel = self.affine_norm(self.weight)
+        return F.conv2d(x, kernel, bias=self.bias, stride=self.stride, padding=0, dilation=self.dilation, groups=self.groups)
 
 
 class AffineConvTranspose2d(nn.Module):
