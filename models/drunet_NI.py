@@ -23,10 +23,10 @@ class ResBlock_NI(nn.Module):
         return self.alpha * x + (1 - self.alpha) * self.m_res(x)
 
 class DRUnet_NI(nn.Module):
-    def __init__(self, in_nc=1, out_nc=1, nc=[64, 128, 256, 512], nb=4):
+    def __init__(self, in_nc=1, out_nc=1, nc=[64, 128, 256, 512], nb=4, noisemap=False):
         super(DRUnet_NI, self).__init__()
 
-        self.m_head = AffineConv2d(in_nc, nc[0], 3, stride=1, padding=1, bias=False)
+        self.m_head = AffineConv2d(in_nc+int(noisemap), nc[0], 3, stride=1, padding=1, bias=False, noisemap=noisemap)
         
         self.m_down = nn.ModuleList([nn.Sequential(
             *[ResBlock_NI(nc[i], nc[i]) for _ in range(nb)],
