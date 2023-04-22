@@ -21,10 +21,10 @@ class ResBlock(nn.Module):
         return x + self.m_res(x)
 
 class DRUnet(nn.Module):
-    def __init__(self, in_nc=1, out_nc=1, nc=[64, 128, 256, 512], nb=4, bias=False):
+    def __init__(self, in_nc=1, out_nc=1, nc=[64, 128, 256, 512], nb=4, bias=False, noisemap=True):
         super(DRUnet, self).__init__()
 
-        self.m_head = nn.Conv2d(in_nc, nc[0], 3, stride=1, padding=1, bias=bias)
+        self.m_head = nn.Conv2d(in_nc+int(noisemap), nc[0], 3, stride=1, padding=1, bias=bias)
         
         self.m_down = nn.ModuleList([nn.Sequential(
             *[ResBlock(nc[i], nc[i], bias) for _ in range(nb)],
@@ -71,7 +71,7 @@ if __name__ == "__main__":
     for color in [False, True]:
         print("Color:", color)
         n_channels = 1 if not color else 3
-        m_drunet = DRUnet(in_nc=n_channels+1, out_nc=n_channels, nc=[64, 128, 256, 512], nb=4)
+        m_drunet = DRUnet(in_nc=n_channels, out_nc=n_channels, nc=[64, 128, 256, 512], nb=4, noisemap=True)
 
         # Load trained weights from official implementation: https://github.com/cszn/DPIR (need to rename the layers)
         state_dict = torch.load("./../saved_models/DRUnet_original/drunet_" + ("color" if color else "gray") + ".pth") 
