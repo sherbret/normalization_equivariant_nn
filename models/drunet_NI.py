@@ -15,7 +15,7 @@ class ResBlock_NI(nn.Module):
     def __init__(self, in_channels=64, out_channels=64):
         super(ResBlock_NI, self).__init__()
         self.m_res = nn.Sequential(AffineConv2d(in_channels, in_channels, 3, stride=1, padding=1, bias=False),
-                                SortPool2(),
+                                SortPool(),
                                 AffineConv2d(in_channels, out_channels, 3, stride=1, padding=1, bias=False))
         self.alpha = nn.Parameter(0.9 * torch.ones(1))
         
