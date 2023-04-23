@@ -45,27 +45,15 @@ class AffineConvTranspose2d(nn.Module):
 
 
 class SortPool(nn.Module):
+    """ Channel-wise sort pooling, C must be an even number """
     def __init__(self):
         super(SortPool, self).__init__()
         
     def forward(self, x):
         N, C, H, W = x.size()
-        x = x.permute(0, 2, 3, 1).view(N, H*W, C)
-        y = torch.empty_like(x)
-        y[:, :, ::2] = -F.max_pool1d(-x, 2)
-        y[:, :, 1::2] = F.max_pool1d(x, 2) 
-        return y.permute(0, 2, 1).view(N, -1, H, W)
-
-
-class SortPool2(nn.Module):
-    def __init__(self, kernel_size=2):
-        super(SortPool2, self).__init__()
-        self.kernel_size = kernel_size
-
-    def forward(self, x):
-        N, C, H, W = x.size()
-        x = x.permute(0, 2, 3, 1).view(N, H * W, C)
-        x_max = F.max_pool1d(x, self.kernel_size)
-        x_min = -F.max_pool1d(-x, self.kernel_size)
-        x = torch.cat((x_max, x_min), dim=2)
-        return x.permute(0, 2, 1).view(N, -1, H, W)
+        with torch.no_grad():
+            sign = (x[:, ::2, :, :] - x[:, 1::2, :, :]) > 0
+            index = torch.arange(0, C, 2, device=x.device).repeat_interleave(2).view(1, C, 1, 1).repeat(N, 1, H, W)
+            index[:, ::2, :, :] += sign
+            index[:, 1::2, :, :] += torch.logical_not(sign)
+        return torch.gather(x, dim=1, index=index)
