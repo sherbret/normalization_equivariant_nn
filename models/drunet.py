@@ -21,10 +21,13 @@ class ResBlock(nn.Module):
         return x + self.m_res(x)
 
 class DRUnet(nn.Module):
-    def __init__(self, in_nc=1, out_nc=1, nc=[64, 128, 256, 512], nb=4, bias=False, noisemap=True):
+    def __init__(self, in_nc=1, out_nc=1, nc=[64, 128, 256, 512], nb=4, bias=False, blind_denoising=True):
         super(DRUnet, self).__init__()
 
-        self.m_head = nn.Conv2d(in_nc+int(noisemap), nc[0], 3, stride=1, padding=1, bias=bias)
+        if not blind_denoising:  # if denoising is not blind, add 1 channel for noisemap
+            in_nc += 1
+
+        self.m_head = nn.Conv2d(in_nc, nc[0], 3, stride=1, padding=1, bias=bias)
         
         self.m_down = nn.ModuleList([nn.Sequential(
             *[ResBlock(nc[i], nc[i], bias) for _ in range(nb)],
@@ -40,7 +43,7 @@ class DRUnet(nn.Module):
 
         self.m_tail = nn.Conv2d(nc[0], out_nc, 3, stride=1, padding=1, bias=bias)
 
-    def forward(self, x, sigma=None):
+    def forward(self, x, noisemap=None):
         _, _, h, w = x.size()
         scale = len(self.m_down)
         d = 2**scale
@@ -49,8 +52,8 @@ class DRUnet(nn.Module):
         x = F.pad(x, pad=(0, d-r2 if r2 > 0 else 0, 0, d-r1 if r1 > 0 else 0), mode='reflect')
 
         # Concatenate noisemap as additional input (useless for blind denoising)
-        if sigma is not None:
-            noisemap = sigma * torch.ones(x.size(0), 1, x.size(2), x.size(3), device=x.device, dtype=x.dtype)
+        if noisemap is not None:
+            #noisemap = sigma * torch.ones(x.size(0), 1, x.size(2), x.size(3), device=x.device, dtype=x.dtype)
             x = torch.cat((x, noisemap), dim=1)
 
         layers = [self.m_head(x)]

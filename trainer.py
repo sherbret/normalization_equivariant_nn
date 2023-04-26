@@ -19,13 +19,14 @@ class MetricPSNR(nn.Module):
 
 
 class DenoisingTrainer():
-    def __init__(self, dataloader_train, dataloader_valid, model, epochs, learning_rate, loss_function, scheduler=None):
+    def __init__(self, dataloader_train, dataloader_valid, model, epochs, learning_rate, loss_function, blind_denoising, scheduler=None):
         self.dataloader_train = dataloader_train
         self.dataloader_valid = dataloader_valid
         self.model = model
         self.epochs = epochs
         self.optimizer = optim.Adam(self.model.parameters(), lr=learning_rate)
         self.loss_function = loss_function
+        self.blind_denoising = blind_denoising
         self.scheduler = scheduler
         self.metric = MetricPSNR()
 
@@ -51,7 +52,7 @@ class DenoisingTrainer():
                 torch.save(self.model.state_dict(), os.path.join(self.path_model_weights, f'model_weights_epoch{e}.pkl'))
 
         #torch.save(self.model, os.path.join(self.path_model_weights, f'model_weights_final.p'))
-        torch.save(self.model.state_dict(), os.path.join(self.path_model_weights, f'model_weights_epoch{e}.pkl'))
+        torch.save(self.model.state_dict(), os.path.join(self.path_model_weights, f'model_weights_last.pkl'))
 
         stop = time.time()
         print(f'END - Total training time: {np.round(stop - start, 2)} seconds')
@@ -62,13 +63,20 @@ class DenoisingTrainer():
         running_metric = 0
         start = time.time()
         for idx, data in enumerate(self.dataloader_train):
-            img_noisy, img = data
+            if self.blind_denoising:
+                img_noisy, img = data
+            else:
+                img_noisy, img, noisemap = data
 
             # Zero the parameter gradients
             self.optimizer.zero_grad()
 
             # Forward + backward + optimize
-            img_pred = self.model(img_noisy)
+            if self.blind_denoising:
+                img_pred = self.model(img_noisy)
+            else:
+                img_pred = self.model(img_noisy, noisemap)
+
             loss = self.loss_function(img_pred, img)
             loss.backward()
             self.optimizer.step()
@@ -100,9 +108,12 @@ class DenoisingTrainer():
         with torch.no_grad():
             start = time.time()
             for idx, data in enumerate(self.dataloader_valid):
-                img_noisy, img = data
-
-                img_pred = self.model(img_noisy)
+                if self.blind_denoising:
+                    img_noisy, img = data
+                    img_pred = self.model(img_noisy)
+                else:
+                    img_noisy, img, noisemap = data
+                    img_pred = self.model(img_noisy, noisemap)
 
                 loss = self.loss_function(img_pred, img)
                 running_loss += loss.item()
