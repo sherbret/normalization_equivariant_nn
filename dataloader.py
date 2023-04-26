@@ -61,14 +61,33 @@ class DenoisingDataset(Dataset):
         sigma = np.random.uniform(low=self.sigma_low, high=self.sigma_high)
         img_torch_noisy = img_torch + sigma * torch.randn(*img_torch.size())
 
-        # sigma = np.random.uniform(low=self.sigma_low, high=self.sigma_high)
-        # img_noisy = img + sigma * np.random.randn(*img.shape)
-
         # Transfer Data to GPU if available:
         if torch.cuda.is_available():
             img_torch_noisy, img_torch = img_torch_noisy.cuda(), img_torch.cuda()
 
         return img_torch_noisy, img_torch
+
+
+class DenoisingDatasetWithNoisemap(DenoisingDataset):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
+    def __getitem__(self, idx):
+        idx_img, idx_patch = np.unravel_index(idx, (len(self.img_list), self.patches_per_img))
+
+        img_np = self.img_list[idx_img]
+        img_torch = self.transform(img_np)
+
+        sigma = np.random.uniform(low=self.sigma_low, high=self.sigma_high)
+        img_torch_noisy = img_torch + sigma * torch.randn(*img_torch.size())
+
+        noisemap = sigma * torch.ones(*img_torch.size())
+
+        # Transfer Data to GPU if available:
+        if torch.cuda.is_available():
+            img_torch_noisy, img_torch, noisemap = img_torch_noisy.cuda(), img_torch.cuda(), noisemap.cuda()
+
+        return img_torch_noisy, img_torch, noisemap
 
 # class DenoisingDatasetOld(Dataset):
 #
