@@ -8,6 +8,8 @@ import numpy as np
 import os
 import time
 
+from scipy import interpolate
+
 
 class MetricPSNR(nn.Module):
     def __init__(self):
@@ -145,3 +147,37 @@ class DenoisingTrainer():
             print(
                 f'- Valid: loss={np.round(loss_valid_average, 6)}, psnr={np.round(metric_valid_average, 2)} dB - {np.round(stop - start, 2)} sec')
 
+
+def get_params_for_next_run(params_last_run):
+    """This function automates training parameter update (including lr scheduler), when a run is resumed from previous
+    session. Below how the input should look like:
+    params_last_run = {
+        'last_epoch': 60,
+        'epochs': 128,
+        'learning_rate': 1e-4,
+        'scheduler_milestones': list(range(16, 128, 16)),
+        'scheduler_gamma': 0.5,
+    }
+    """
+    # Prepare x and y inputs for interpolator
+    x_epochs = [0, ] + params_last_run['scheduler_milestones']
+
+    y_lr = [params_last_run['learning_rate'], ]
+    for milestone in params_last_run['scheduler_milestones']:
+        y_lr.append(y_lr[-1] * params_last_run['scheduler_gamma'])
+
+    # Intialize interpolator for modelizing lr progression. Now we can interpolate which was the lr value when last run stopped
+    f = interpolate.interp1d(x_epochs, y_lr, kind='previous')
+
+    # Get new values for lr, epochs, and milestones:
+    last_epoch = params_last_run['last_epoch'] - 1
+
+    new_lr = float( f(last_epoch) )
+    new_epochs = params_last_run['epochs'] - last_epoch
+
+    new_scheduler_milestones = np.array(params_last_run['scheduler_milestones']) - last_epoch
+    new_scheduler_milestones = np.delete(new_scheduler_milestones,
+                                         np.where(new_scheduler_milestones < 0))  # remove negative milestones
+    new_scheduler_milestones = list(new_scheduler_milestones)
+
+    return new_epochs, new_lr, new_scheduler_milestones
