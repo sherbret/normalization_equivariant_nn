@@ -96,6 +96,7 @@ class DenoisingTrainer():
 
         stop = time.time()
 
+        wandb.log({"learning_rate": self.optimizer.param_groups[0]['lr']})
         if self.scheduler:
             self.scheduler.step()
 
