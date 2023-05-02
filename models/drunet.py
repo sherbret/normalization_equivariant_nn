@@ -20,6 +20,7 @@ class ResBlock(nn.Module):
     def forward(self, x):
         return x + self.m_res(x)
 
+
 class DRUnet(nn.Module):
     def __init__(self, in_nc=1, out_nc=1, nc=[64, 128, 256, 512], nb=4, bias=False, blind_denoising=True):
         super(DRUnet, self).__init__()
