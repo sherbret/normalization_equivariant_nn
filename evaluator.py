@@ -9,11 +9,10 @@ class Evaluator:
         self.dataset = dataset_test
         self.model = model
         self.metric = MetricPSNR()
-        self.eval_fname = eval_fname
 
         self.metric_average = None
 
-    def evaluate(self):
+    def evaluate(self, eval_fname='scores.csv'):
         self.model.eval()
         running_metric = 0
         metric_dict = {}
@@ -42,9 +41,10 @@ class Evaluator:
         print(f'Average PSNR value: {self.metric_average} dB')
 
         # Save reval:
-        with open(self.eval_fname, 'w', newline='') as csvfile:
-            writer = csv.writer(csvfile)
-            writer.writerow(['fname', 'psnr'])
-            for key, value in metric_dict.items():
-                writer.writerow([key, str(value)])
-            writer.writerow(['Average', str(self.metric_average)])
+        if eval_fname:  # save if fname is specified
+            with open(eval_fname, 'w', newline='') as csvfile:
+                writer = csv.writer(csvfile)
+                writer.writerow(['fname', 'psnr'])
+                for key, value in metric_dict.items():
+                    writer.writerow([key, str(value)])
+                writer.writerow(['Average', str(self.metric_average)])
