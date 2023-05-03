@@ -4,6 +4,7 @@ import numpy as np
 import csv
 from torch.utils.data import DataLoader
 import torch.nn.functional as F
+import torch
 
 class Evaluator:
     def __init__(self, dataset_test, model, blind_denoising=False):
@@ -25,24 +26,25 @@ class Evaluator:
 
         start = time.time()
         for idx, data in enumerate(dataloader):
-            if self.blind_denoising:
-                img_noisy, img = data
-                img_pred = self.model(img_noisy)  # predict
-            else:
-                img_noisy, img, noisemap = data
-                img_pred = self.model(img_noisy, noisemap)  # predict
+            with torch.no_grad():
+                if self.blind_denoising:
+                    img_noisy, img = data
+                    img_pred = self.model(img_noisy)  # predict
+                else:
+                    img_noisy, img, noisemap = data
+                    img_pred = self.model(img_noisy, noisemap)  # predict
 
-            # Get eval metric:
-            metric_value = self.metric(img_pred, img)
+                # Get eval metric:
+                metric_value = self.metric(img_pred, img)
 
-            key = self.dataset.fname_list[idx]  # retrieve file name
-            metric_dict[key] = metric_value.item()
+                key = self.dataset.fname_list[idx]  # retrieve file name
+                metric_dict[key] = metric_value.item()
 
-            # running_metric += metric_value.item()
+                # running_metric += metric_value.item()
 
-            if eval_noisy:
-                metric_value_noisy = self.metric(img_noisy, img)
-                metric_dict_noisy[key] = metric_value_noisy.item()
+                if eval_noisy:
+                    metric_value_noisy = self.metric(img_noisy, img)
+                    metric_dict_noisy[key] = metric_value_noisy.item()
 
 
         stop = time.time()
