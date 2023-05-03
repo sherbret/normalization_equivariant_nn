@@ -11,6 +11,8 @@ class Evaluator:
         self.metric = MetricPSNR()
         self.eval_fname = eval_fname
 
+        self.metric_average = None
+
     def evaluate(self):
         self.model.eval()
         running_metric = 0
@@ -34,10 +36,10 @@ class Evaluator:
 
         stop = time.time()
         computing_time = stop-start
-        metric_average = running_metric / len(dataloader)
+        self.metric_average = running_metric / len(dataloader)
 
         print(f'Total prediction time was {np.round(computing_time,2)} sec, i.e. {np.round(computing_time/len(dataloader),2)} sec/image')
-        print(f'Average PSNR value: {metric_average} dB')
+        print(f'Average PSNR value: {self.metric_average} dB')
 
         # Save reval:
         with open(self.eval_fname, 'w', newline='') as csvfile:
@@ -45,4 +47,4 @@ class Evaluator:
             writer.writerow(['fname', 'psnr'])
             for key, value in metric_dict.items():
                 writer.writerow([key, str(value)])
-            writer.writerow(['Average', str(metric_average)])
+            writer.writerow(['Average', str(self.metric_average)])
