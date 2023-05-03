@@ -13,11 +13,13 @@ class Evaluator:
         self.metric = MetricPSNR()
 
         self.metric_average = None
+        self.metric_average_noisy = None
 
-    def evaluate(self, eval_fname='scores.csv'):
+    def evaluate(self, eval_fname='scores.csv', eval_noisy=False):
         self.model.eval()
-        running_metric = 0
+        #running_metric = 0
         metric_dict = {}
+        metric_dict_noisy = {}
 
         dataloader = DataLoader(self.dataset, batch_size=1, shuffle=False)
 
@@ -32,18 +34,28 @@ class Evaluator:
 
             # Get eval metric:
             metric_value = self.metric(img_pred, img)
-            running_metric += metric_value.item()
 
             key = self.dataset.fname_list[idx]  # retrieve file name
             metric_dict[key] = metric_value.item()
 
+            # running_metric += metric_value.item()
+
+            if eval_noisy:
+                metric_value_noisy = self.metric(img_noisy, img)
+                metric_dict_noisy[key] = metric_value_noisy.item()
+
 
         stop = time.time()
         computing_time = stop-start
-        self.metric_average = running_metric / len(dataloader)
+
+        #self.metric_average = running_metric / len(dataloader)
+        self.metric_average = np.mean(list(metric_dict.values()))
+
+        if eval_noisy:
+            self.metric_average_noisy = np.mean(list(metric_dict_noisy.values()))
 
         print(f'Total prediction time was {np.round(computing_time,2)} sec, i.e. {np.round(computing_time/len(dataloader),2)} sec/image')
-        print(f'Average PSNR value: {self.metric_average} dB')
+        print(f'Average PSNR value: {np.round(self.metric_average, 2)} dB')
 
         # Save reval:
         if eval_fname:  # save if fname is specified
