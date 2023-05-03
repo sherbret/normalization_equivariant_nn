@@ -3,11 +3,13 @@ import time
 import numpy as np
 import csv
 from torch.utils.data import DataLoader
+import torch.nn.functional as F
 
 class Evaluator:
-    def __init__(self, dataset_test, model, eval_fname='scores.csv'):
+    def __init__(self, dataset_test, model, blind_denoising=False):
         self.dataset = dataset_test
         self.model = model
+        self.blind_denoising = blind_denoising
         self.metric = MetricPSNR()
 
         self.metric_average = None
@@ -21,9 +23,12 @@ class Evaluator:
 
         start = time.time()
         for idx, data in enumerate(dataloader):
-            img_noisy, img = data
-
-            img_pred = self.model(img_noisy)  # predict
+            if self.blind_denoising:
+                img_noisy, img = data
+                img_pred = self.model(img_noisy)  # predict
+            else:
+                img_noisy, img, noisemap = data
+                img_pred = self.model(img_noisy, noisemap)  # predict
 
             # Get eval metric:
             metric_value = self.metric(img_pred, img)
