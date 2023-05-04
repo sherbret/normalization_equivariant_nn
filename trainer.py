@@ -52,6 +52,7 @@ class DenoisingTrainerDNCNN():
             if e % self.save_every_n_epochs == 0:
                 #torch.save(self.model, os.path.join(self.path_model_weights, f'model_weights_epoch{e}.p'))
                 torch.save(self.model.state_dict(), os.path.join(self.path_model_weights, f'model_weights_epoch{e}.pkl'))
+                torch.save(self.optimizer.state_dict(), os.path.join(self.path_model_weights, 'optimizer_state_dict_last.pkl'))
 
         #torch.save(self.model, os.path.join(self.path_model_weights, f'model_weights_final.p'))
         torch.save(self.model.state_dict(), os.path.join(self.path_model_weights, f'model_weights_last.pkl'))
@@ -181,6 +182,7 @@ class DenoisingTrainer():
             if e % self.save_every_n_epochs == 0:
                 #torch.save(self.model, os.path.join(self.path_model_weights, f'model_weights_epoch{e}.p'))
                 torch.save(self.model.state_dict(), os.path.join(self.path_model_weights, f'model_weights_epoch{e}.pkl'))
+                torch.save(self.optimizer.state_dict(), os.path.join(self.path_model_weights, 'optimizer_state_dict_last.pkl'))
 
         #torch.save(self.model, os.path.join(self.path_model_weights, f'model_weights_final.p'))
         torch.save(self.model.state_dict(), os.path.join(self.path_model_weights, f'model_weights_last.pkl'))
