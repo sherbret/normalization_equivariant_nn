@@ -61,6 +61,7 @@ class DRUnet_NI(nn.Module):
         # Concatenate noisemap as additional input (useless for blind denoising)
         if noisemap is not None:
             #noisemap = sigma * torch.ones(x.size(0), 1, x.size(2), x.size(3), device=x.device, dtype=x.dtype)
+            noisemap = F.pad(noisemap, pad=(0, d - r2 if r2 > 0 else 0, 0, d - r1 if r1 > 0 else 0), mode='reflect')
             x = torch.cat((x, noisemap), dim=1)
 
         layers = [self.m_head(x)]
