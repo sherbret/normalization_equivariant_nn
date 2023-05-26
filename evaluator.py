@@ -7,7 +7,7 @@ import torch.nn.functional as F
 import torch
 
 class Evaluator:
-    def __init__(self, dataset_test, model, blind_denoising=False):
+    def __init__(self, dataset_test, model, blind_denoising=True):
         self.dataset = dataset_test
         self.model = model
         self.blind_denoising = blind_denoising
@@ -42,7 +42,7 @@ class Evaluator:
 
                 # running_metric += metric_value.item()
 
-                if eval_noisy:
+                if eval_noisy:  # <- to delete, not useful after all
                     metric_value_noisy = self.metric(img_noisy, img)
                     metric_dict_noisy[key] = metric_value_noisy.item()
 
@@ -53,7 +53,7 @@ class Evaluator:
         #self.metric_average = running_metric / len(dataloader)
         self.metric_average = np.mean(list(metric_dict.values()))
 
-        if eval_noisy:
+        if eval_noisy:  # <- to delete, not useful after all
             self.metric_average_noisy = np.mean(list(metric_dict_noisy.values()))
 
         print(f'Total prediction time was {np.round(computing_time,2)} sec, i.e. {np.round(computing_time/len(dataloader),2)} sec/image')

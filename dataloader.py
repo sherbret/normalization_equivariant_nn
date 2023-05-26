@@ -78,7 +78,9 @@ class DenoisingDatasetWithNoisemap(DenoisingDataset):
     def __getitem__(self, idx):
         idx_img, idx_patch = np.unravel_index(idx, (len(self.img_list), self.patches_per_img))
 
-        img_np = self.img_list[idx_img]
+        #img_np = self.img_list[idx_img]
+        img_pil = self.img_list[idx_img]
+        img_np = np.array(img_pil, dtype=np.float32) / 255
         img_torch = self.transform(img_np)
 
         sigma = np.random.uniform(low=self.sigma_low, high=self.sigma_high)
