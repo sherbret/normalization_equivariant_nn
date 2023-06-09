@@ -13,7 +13,7 @@ Here is the list of libraries you need to install to execute the code:
 
 ## Pre-trained models
 
-The pre-trained models for the three variants (ordinary, scale-equivariant and normalization-equivariant) of the popular networks DRUNet [K. Zhang et al., IEEE Trans PAMI 2021] and FDnCNN [K. Zhang et al., IEEE Trans IP 2017] are available at: 
+The pre-trained models for the three variants (ordinary, scale-equivariant and normalization-equivariant) of the popular networks DRUNet [K. Zhang et al., IEEE Trans PAMI 2021] and FDnCNN [K. Zhang et al., IEEE Trans IP 2017] (see [`models`](models/)) are available at: 
 https://drive.google.com/drive/u/0/folders/1qQV5AzhwlZBhjBPMG2IfQecUWVwcJKwY
 
 ## Demo
