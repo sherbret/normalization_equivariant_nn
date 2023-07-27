@@ -11,6 +11,16 @@ Here is the list of libraries you need to install to execute the code:
 * Pillow (PIL Fork) 9.5.0
 * Matplotlib 3.7.1
 
+## Install
+
+To install in an environment using pip:
+
+```
+python -m venv .nenn_env
+source .nenn_env/bin/activate
+pip install /path/to/normalization_equivariant_nn
+```
+
 ## Pre-trained models
 
 The pre-trained models for the three variants (ordinary, scale-equivariant and normalization-equivariant) of the popular networks DRUNet [K. Zhang et al., IEEE Trans PAMI 2021] and FDnCNN [K. Zhang et al., IEEE Trans IP 2017] (see [`models`](models/)) are available at: 
