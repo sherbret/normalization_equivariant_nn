@@ -24,10 +24,6 @@ We provide a Python Jupyter Notebook with example code to reproduce the experime
 
 Channel-wise sort pooling and affine-constrained convolutional layers are implemented in Pytorch in the file [`basicblock.py`](models/basicblock.py).
 
-## Training
-
-TODO
-
 ## Acknowledgements
 
 This work was supported by Bpifrance agency (funding) through the LiChIE contract. Computations  were performed on the Inria Rennes computing grid facilities partly funded by France-BioImaging infrastructure (French National Research Agency - ANR-10-INBS-04-07, “Investments for the future”).
