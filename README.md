@@ -1,5 +1,5 @@
 # Normalization-Equivariant Neural Networks with Application to Image Denoising
-Sébastien Herbreteau, Emmanuel Moebel and Charles Kervrann
+Sébastien Herbreteau, Emmanuel Moebel, and Charles Kervrann
 
 ## Requirements
 
