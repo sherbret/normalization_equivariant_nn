@@ -32,7 +32,7 @@ We provide a Python Jupyter Notebook with example code to reproduce the experime
 
 ## SortPool and AffineConv2d
 
-Channel-wise sort pooling and affine-constrained convolutional layers are implemented in Pytorch in the file [`basicblock.py`](models/basicblock.py).
+Channel-wise sort pooling and affine-constrained convolutional layers are implemented in Pytorch in the file [`basicblocks.py`](models/basicblocks.py).
 
 ## Acknowledgements
 
