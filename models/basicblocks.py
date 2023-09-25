@@ -47,12 +47,9 @@ class SortPool(nn.Module):
         
     def forward(self, x):
         N, C, H, W = x.size()
-        with torch.no_grad():
-            sign = (x[:, ::2, :, :] - x[:, 1::2, :, :]) > 0
-            index = torch.arange(0, C, 2, device=x.device).repeat_interleave(2).view(1, C, 1, 1).repeat(N, 1, H, W)
-            index[:, ::2, :, :] += sign
-            index[:, 1::2, :, :] += torch.logical_not(sign)
-        return torch.gather(x, dim=1, index=index)
+        x1, x2 = torch.split(x.view(N, C//2, 2, H, W), 1, dim=2)
+        diff = F.relu(x1 - x2, inplace=True)
+        return torch.cat((x1-diff, x2+diff), dim=2).view(x.size())
 
 class ResidualConnection(nn.Module):
     """ Residual connection """
