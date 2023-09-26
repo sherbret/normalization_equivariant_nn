@@ -9,9 +9,10 @@ from basicblocks import *
 # Code inspired from https://github.com/cszn/DPIR/blob/master/models/network_unet.py
 
 class DRUNet(nn.Module):
-    def __init__(self, in_nc=1, out_nc=1, nc=[64, 128, 256, 512], nb=4, bias=False, blind=False, mode="ordinary"):
+    def __init__(self, in_nc=1, out_nc=1, nc=[64, 128, 256, 512], nb=4, blind=False, mode='scale-equiv'):
         super(DRUNet, self).__init__()
 
+        bias = mode == 'ordinary'
         self.blind = blind
         if not blind: in_nc += 1
 
