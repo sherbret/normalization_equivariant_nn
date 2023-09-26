@@ -9,7 +9,7 @@ from basicblocks import *
 # Code inspired from https://github.com/cszn/DPIR/blob/master/models/network_dncnn.py
 
 class FDnCNN(nn.Module):
-    def __init__(self, in_nc=1, out_nc=1, nc=64, nb=20, bias=True, blind=False, mode='ordinary'):
+    def __init__(self, in_nc=1, out_nc=1, nc=64, nb=20, blind=False, mode='ordinary'):
         """
         in_nc: channel number of input
         out_nc: channel number of output
@@ -18,6 +18,7 @@ class FDnCNN(nn.Module):
         """
         super(FDnCNN, self).__init__()
 
+        bias = mode == 'ordinary'
         self.blind = blind
         if not blind: in_nc += 1
 
