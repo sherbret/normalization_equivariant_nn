@@ -7,7 +7,7 @@ import torch.nn.functional as F
 
 class AffineConv2d(nn.Conv2d):
     def __init__(self, in_channels, out_channels, kernel_size, stride=1, padding=0, dilation=1, groups=1, padding_mode="reflect", blind=True):
-        super(AffineConv2d, self).__init__(in_channels, out_channels, kernel_size, 
+        super().__init__(in_channels, out_channels, kernel_size, 
                                            stride=stride, padding=padding, dilation=dilation, 
                                            groups=groups, bias=False)
         
@@ -33,7 +33,7 @@ class AffineConv2d(nn.Conv2d):
 class AffineConvTranspose2d(nn.Module):
     """ Affine ConvTranspose2d with kernel=2 and stride=2, implemented using PixelShuffle """
     def __init__(self, in_channels, out_channels):
-        super(AffineConvTranspose2d, self).__init__()
+        super().__init__()
         self.conv1x1 = AffineConv2d(in_channels, 4*out_channels, 1)
         self.pixel_shuffle = nn.PixelShuffle(2)
             
@@ -43,7 +43,7 @@ class AffineConvTranspose2d(nn.Module):
 class SortPool(nn.Module):
     """ Channel-wise sort pooling, C must be an even number """
     def __init__(self):
-        super(SortPool, self).__init__()
+        super().__init__()
         
     def forward(self, x):
         N, C, H, W = x.size()
@@ -54,7 +54,7 @@ class SortPool(nn.Module):
 class ResidualConnection(nn.Module):
     """ Residual connection """
     def __init__(self, mode='ordinary'):
-        super(ResidualConnection, self).__init__()
+        super().__init__()
 
         self.mode = mode
         if mode=='norm-equiv':
@@ -92,7 +92,7 @@ def activation(mode='ordinary'):
 
 class ResBlock(nn.Module):
     def __init__(self, in_channels=64, out_channels=64, bias=False, mode="ordinary"):
-        super(ResBlock, self).__init__()
+        super().__init__()
 
         self.m_res = nn.Sequential(conv2d(in_channels, in_channels, 3, stride=1, padding=1, bias=bias, mode=mode),
                                 activation(mode),
