@@ -10,7 +10,7 @@ from basicblocks import *
 
 class DRUNet(nn.Module):
     def __init__(self, in_nc=1, out_nc=1, nc=[64, 128, 256, 512], nb=4, blind=False, mode='scale-equiv'):
-        super(DRUNet, self).__init__()
+        super().__init__()
 
         bias = mode == 'ordinary'
         self.blind = blind
