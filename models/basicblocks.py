@@ -9,17 +9,7 @@ class AffineConv2d(nn.Conv2d):
     def __init__(self, in_channels, out_channels, kernel_size, stride=1, padding=0, dilation=1, groups=1, padding_mode="reflect", blind=True):
         super().__init__(in_channels, out_channels, kernel_size, 
                                            stride=stride, padding=padding, dilation=dilation, 
-                                           groups=groups, bias=False)
-        
-        if padding_mode=="reflect":
-            self.apply_padding = nn.ReflectionPad2d(padding)
-        elif padding_mode=="replicate":
-            self.apply_padding = nn.ReplicationPad2d(padding)
-        elif padding_mode=="zeros":
-            self.apply_padding = nn.ZeroPad2d(padding)
-        else:
-            raise NotImplementedError("Only padding_mode zero, reflect and replicate are implemented")
-
+                                           groups=groups, padding_mode=padding_mode, bias=False)
         self.blind = blind
         
     def affine(self, w):
@@ -28,7 +18,9 @@ class AffineConv2d(nn.Conv2d):
     
     def forward(self, x):
         kernel = self.affine(self.weight) if self.blind else torch.cat((self.affine(self.weight[:, :-1, :, :]), self.weight[:, -1:, :, :]), dim=1)
-        return F.conv2d(self.apply_padding(x), kernel, stride=self.stride, dilation=self.dilation, groups=self.groups)
+        padding = tuple(elt for elt in reversed(self.padding) for _ in range(2)) # used to translate padding arg used by Conv module to the ones used by F.pad
+        padding_mode = self.padding_mode if self.padding_mode != 'zeros' else 'constant' # used to translate padding_mode arg used by Conv module to the ones used by F.pad
+        return F.conv2d(F.pad(x, padding, mode=padding_mode), kernel, stride=self.stride, dilation=self.dilation, groups=self.groups)
 
 class AffineConvTranspose2d(nn.Module):
     """ Affine ConvTranspose2d with kernel=2 and stride=2, implemented using PixelShuffle """
