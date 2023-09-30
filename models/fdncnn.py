@@ -16,7 +16,7 @@ class FDnCNN(nn.Module):
         nc: channel number
         nb: total number of conv layers
         """
-        super(FDnCNN, self).__init__()
+        super().__init__()
 
         bias = mode == 'ordinary'
         self.blind = blind
