@@ -27,10 +27,9 @@ class AffineConvTranspose2d(nn.Module):
     def __init__(self, in_channels, out_channels):
         super().__init__()
         self.conv1x1 = AffineConv2d(in_channels, 4*out_channels, 1)
-        self.pixel_shuffle = nn.PixelShuffle(2)
-            
+        
     def forward(self, x):
-        return self.pixel_shuffle(self.conv1x1(x))
+        return F.pixel_shuffle(self.conv1x1(x), 2)
 
 class SortPool(nn.Module):
     """ Channel-wise sort pooling, C must be an even number """
