@@ -38,9 +38,8 @@ class SortPool(nn.Module):
         
     def forward(self, x):
         N, C, H, W = x.size()
-        x1, x2 = torch.split(x.view(N, C//2, 2, H, W), 1, dim=2)
-        diff = F.relu(x1 - x2, inplace=True)
-        return torch.cat((x1-diff, x2+diff), dim=2).view(N, C, H, W)
+        x1, x2 = torch.aminmax(x.view(N, C//2, 2, H, W), dim=2, keepdim=True)
+        return torch.cat((x1, x2), dim=2).view(N, C, H, W)
 
 class ResidualConnection(nn.Module):
     """ Residual connection """
