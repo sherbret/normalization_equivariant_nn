@@ -1,4 +1,4 @@
-# Normalization-Equivariant Neural Networks with Application to Image Denoising
+# Normalization-Equivariant Neural Networks with Application to Image Denoising (NeurIPS'23)
 Sébastien Herbreteau, Emmanuel Moebel, and Charles Kervrann
 
 ## Requirements
