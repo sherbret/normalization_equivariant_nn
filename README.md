@@ -30,6 +30,13 @@ https://drive.google.com/drive/u/0/folders/1qQV5AzhwlZBhjBPMG2IfQecUWVwcJKwY
 
 We provide a Python Jupyter Notebook with example code to reproduce the experiments of the paper: [`demo_jupyter_notebook.ipynb`](demo_jupyter_notebook.ipynb). Make sure to download the pre-trained models first before using it.
 
+### Training
+
+You can also retrain the models by yourself by using the [`demo_training.py`](./demo_training.py) file (time-consuming). Example:
+```
+python ./demo_training.py  --model_name fdncnn --blind --mode norm-equiv --num_iterations 900000 --patch_size 70 --batch_size 128 --save_every 1000 --lr 0.0001 --halve_lr_every 900000 --loss_function mse --in_folder my_folder_training_images --out_folder my_folder_saved_models
+```
+
 ## SortPool and AffineConv2d
 
 Channel-wise sort pooling and affine-constrained convolutional layers are implemented in Pytorch in the file [`basicblocks.py`](models/basicblocks.py).
