@@ -44,3 +44,16 @@ Channel-wise sort pooling and affine-constrained convolutional layers are implem
 ## Acknowledgements
 
 This work was supported by Bpifrance agency (funding) through the LiChIE contract. Computations  were performed on the Inria Rennes computing grid facilities partly funded by France-BioImaging infrastructure (French National Research Agency - ANR-10-INBS-04-07, “Investments for the future”).
+
+## Citation
+```BibTex
+@inproceedings{NEURIPS2023_12143893,
+ author = {Herbreteau, S\'{e}bastien and Moebel, Emmanuel and Kervrann, Charles},
+ booktitle = {Advances in Neural Information Processing Systems},
+ pages = {5706--5728},
+ title = {Normalization-Equivariant Neural Networks with Application to Image Denoising},
+ volume = {36},
+ year = {2023}
+}
+```
+
