@@ -41,7 +41,7 @@ class DRUNet(nn.Module):
         scale = len(self.m_down)
         d = 2**scale
         r1, r2 = h % d, w % d
-        x = F.pad(x, pad=(0, d-r2 if r2 > 0 else 0, 0, d-r1 if r1 > 0 else 0), mode='reflect') 
+        x = F.pad(x, pad=(0, d-r2 if r2 > 0 else 0, 0, d-r1 if r1 > 0 else 0), mode='constant', value=float(x.mean()))
         
         if not self.blind: # Concatenate noisemap as additional input
             assert sigma is not None
