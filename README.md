@@ -47,7 +47,7 @@ This work was supported by Bpifrance agency (funding) through the LiChIE contrac
 
 ## Citation
 ```BibTex
-@inproceedings{NEURIPS2023_12143893,
+@inproceedings{herbreteau2023normalizationequivariant,
  author = {Herbreteau, S\'{e}bastien and Moebel, Emmanuel and Kervrann, Charles},
  booktitle = {Advances in Neural Information Processing Systems},
  pages = {5706--5728},
