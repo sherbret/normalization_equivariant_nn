@@ -23,8 +23,11 @@ pip install /path/to/normalization_equivariant_nn
 
 ## Pre-trained models
 
-The pre-trained models for the three variants (ordinary, scale-equivariant and normalization-equivariant) of the popular networks DRUNet [K. Zhang et al., IEEE Trans PAMI 2022] and FDnCNN [K. Zhang et al., IEEE Trans IP 2017] (see [`models`](models/)) are available at: 
-https://github.com/sherbret/normalization_equivariant_nn/releases/tag/v1.0
+The pre-trained models for the three variants (*ordinary, scale-equivariant* and *normalization-equivariant*) of the popular networks (see [`models`](models/)):
+- DRUNet [K. Zhang et al., IEEE Trans PAMI 2022] 
+- FDnCNN [K. Zhang et al., IEEE Trans IP 2017]
+
+are available at:  https://github.com/sherbret/normalization_equivariant_nn/releases/tag/v1.0
 
 ## Demo
 
