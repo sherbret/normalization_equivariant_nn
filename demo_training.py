@@ -93,7 +93,7 @@ class TrainingDataset(Dataset):
     
 ### DATASET, MODEL, OPTIMIZER
 dataset = TrainingDataset(in_folder=args.in_folder, sigma_min=args.sigma_min, sigma_max=args.sigma_max, patch_size=args.patch_size, batch_size=args.batch_size)
-torch.manual_seed(args.seed) # for reproductibility (in particular if the model is loaded several times)
+torch.manual_seed(args.seed) # for reproducibility (in particular if the model is loaded several times)
 np.random.seed(args.seed)
 
 model = FDnCNN(blind=args.blind, mode=args.mode).to(device) if args.model_name == "fdncnn" else DRUNet(blind=args.blind, mode=args.mode).to(device)
