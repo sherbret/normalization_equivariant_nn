@@ -35,7 +35,7 @@ parser.add_argument("--halve_lr_every", type=int, dest="halve_lr_every", default
 parser.add_argument("--batch_size", type=int, dest="batch_size", default=128)
 parser.add_argument("--patch_size", type=int, dest="patch_size", default=70)
 parser.add_argument("--loss_function", type=str, dest="loss_function", help="Either mse or l1 loss.", default="mse")
-parser.add_argument("--seed", type=int, dest="seed", help="Seed for reproductibility.", default=1234)
+parser.add_argument("--seed", type=int, dest="seed", help="Seed for reproducibility.", default=1234)
 parser.add_argument("--save_every", type=int, dest="save_every", default=1000)
 
 # DATA
